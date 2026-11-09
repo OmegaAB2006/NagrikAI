@@ -1,4 +1,4 @@
-# 🏛️ NagrikAI — Intelligent Multi-Agent Government Services Platform
+# 🏛️ NagrikAI — Intelligent Government Services Platform
 
 > Powered by **IBM Granite AI (watsonx)** · Built with **FastAPI + Next.js + TypeScript**
 
@@ -8,144 +8,99 @@
 
 NagrikAI is a secure, intelligent, multilingual AI platform that helps Indian citizens discover government schemes, check their eligibility, prepare documents, and track applications — all through a single conversational interface.
 
-The system is built on an **Agentic AI architecture**: instead of a single chatbot, multiple specialised AI agents collaborate under a central orchestrator to give accurate, personalised, and verifiable answers.
+The system uses **IBM Granite AI** to understand natural language questions, personalise answers based on the citizen's profile, and provide step-by-step guidance with direct links to official government portals.
 
 ---
 
-## What the AI Does
+## What NagrikAI Does
 
 ### For Citizens
 | Capability | Description |
 |---|---|
-| **Scheme Discovery** | Understands natural-language queries ("What schemes can I get as an OBC student in Karnataka?") and finds relevant central and state government schemes |
-| **Eligibility Assessment** | Compares the citizen's profile (age, income, category, state, occupation) against official scheme criteria and gives a preliminary eligibility verdict |
-| **Document Guidance** | Generates personalised document checklists; accepts uploaded documents (Aadhaar, PAN, income certificate, etc.) and feeds them into AI reasoning |
-| **Application Assistance** | Walks users through official portal procedures step-by-step with direct clickable links to the correct government websites |
-| **Image Analysis** | Accepts photos of government documents, forms, notices, or ID cards and provides AI-powered analysis and actionable guidance |
-| **Application Tracking** | Maintains a record of saved applications and allows users to update status manually |
-| **Multilingual Support** | Full UI and AI responses available in English, Hindi (हिंदी), and Kannada (ಕನ್ನಡ) |
+| **Scheme Discovery** | Ask in plain language — "What schemes can I get as an OBC student in Karnataka?" — and get relevant central and state government schemes |
+| **Eligibility Assessment** | Your profile (age, income, category, state, occupation) is compared against scheme criteria and a preliminary eligibility verdict is given |
+| **Document Guidance** | Generates personalised document checklists; uploaded documents are fed into AI reasoning for better recommendations |
+| **Application Assistance** | Step-by-step guidance with clickable links to the correct official government portals |
+| **Image Analysis** | Upload a photo of any government document, form, notice, or ID card for instant AI analysis |
+| **Application Tracking** | Save and track your government scheme applications |
+| **Multilingual Support** | Full UI and AI responses in English, Hindi (हिंदी), and Kannada (ಕನ್ನಡ) |
 
 ### For Administrators
 | Capability | Description |
 |---|---|
-| **Agent Monitoring** | Live view of every agent execution — latency, token usage, success rate, tool calls |
-| **LLM Evaluation** | Accuracy, precision, recall, F1, semantic similarity, ROUGE, BLEU scores against labelled test datasets |
-| **RAG Evaluation** | Context precision, context recall, faithfulness, answer relevancy, groundedness |
-| **Guardrail Monitoring** | Real-time dashboard of prompt injection attempts, blocked inputs, redacted outputs, unauthorised tool calls |
-| **Cost Analytics** | Token consumption and estimated API cost per agent, per workflow, per time period |
-| **Audit Logs** | Immutable records of every important AI decision, security event, and human approval |
-| **Human Approvals** | Review queue for consequential actions (application submission, document sharing, data deletion) |
+| **Agent Monitoring** | Live view of every AI execution — latency, token usage, success rate |
+| **LLM Evaluation** | Accuracy, precision, recall, F1 scores against test datasets |
+| **Guardrail Monitoring** | Dashboard of blocked inputs, prompt injection attempts, security events |
+| **Cost Analytics** | Token consumption and estimated API cost per workflow |
+| **Audit Logs** | Records of every important AI decision and security event |
+| **Human Approvals** | Review queue for consequential actions |
 
 ---
 
-## AI Models Used
+## How the AI Works
 
-| Purpose | Model | Provider | Notes |
-|---|---|---|---|
-| **Primary chat / all text reasoning** | `ibm/granite-4-h-small` | IBM watsonx (us-south) | Handles scheme discovery, eligibility, Q&A, application guidance, conversation history |
-| **Image / document analysis** | `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` | IBM watsonx (us-south) | Multimodal vision model; analyses uploaded document photos, ID cards, government notices |
+Every request builds a structured prompt sent to IBM Granite containing:
 
-### Authentication
-Both models are accessed via **IBM IAM token exchange** — the API key is exchanged for a short-lived Bearer token automatically (refreshed every 50 minutes). No model calls are made without a valid token.
+1. **Citizen profile** — state, age, income, occupation, education, category, disability/BPL flags (from saved profile)
+2. **Available documents** — names of documents the user has uploaded
+3. **Conversation history** — last 10 message turns so follow-up questions work naturally
+4. **Language instruction** — AI responds in English, Hindi, or Kannada based on preference
+5. **Discovered scheme context** — scheme names and eligibility found during the request
 
-### How the AI is prompted
-Every request builds a structured system prompt that includes:
-1. **Role definition** — NagrikAI assistant with specific responsibilities
-2. **Language instruction** — English / Hindi / Kannada based on user preference
-3. **Citizen profile block** — state, age, income, occupation, education, category, disability status, BPL status (from saved profile)
-4. **Available documents** — list of documents the user has uploaded this session
-5. **Conversation history** — last 10 message turns for follow-up context
-6. **Agent context** — scheme names / eligibility results discovered by specialist agents
+This means when you ask *"What schemes am I eligible for?"*, the AI already knows your complete profile and gives a personalised answer — not a generic one.
 
 ---
 
-## Multi-Agent Architecture
+## Request Workflow
 
 ```
-                        USER INPUT
-                             │
-                             ▼
-                    INPUT GUARDRAILS
-                    (injection, PII,
-                     format checks)
-                             │
-                             ▼
-               ┌─── ORCHESTRATOR AGENT ───┐
-               │   Classifies intent,     │
-               │   routes to sub-agents,  │
-               │   merges results         │
-               └──────────┬───────────────┘
-                          │
-          ┌───────────────┼───────────────┐
-          ▼               ▼               ▼
-   SCHEME DISCOVERY   ELIGIBILITY    INFORMATION
-       AGENT           AGENT         VERIFICATION
-   (searches official  (matches      (cross-checks
-    govt schemes)      profile vs    sources,
-                       criteria)     flags unverified
-                                     claims)
-          └───────────────┼───────────────┘
-                          ▼
-                   VERIFIED RESULTS
-                          │
-                          ▼
-                 OUTPUT GUARDRAILS
-                 (hallucination check,
-                  PII filter, schema
-                  validation)
-                          │
-                          ▼
-                  CITIZEN DASHBOARD
-                  (schemes, eligibility,
-                   clickable links)
-                          │
-                 ┌────────┴────────┐
-                 ▼                 ▼
-          DOCUMENT AGENT    APPLICATION AGENT
-          (checklist,        (step-by-step
-           upload,            guidance,
-           extraction)        portal links,
-                              human approval)
-                                   │
-                                   ▼
-                           TRACKING AGENT
-                           (saves application,
-                            status updates,
-                            reminders)
-                                   │
-                                   ▼
-                      OBSERVABILITY + EVALUATION
-                      (traces, metrics, guardrail
-                       events, cost tracking)
+User sends message
+       │
+       ▼
+INPUT GUARDRAILS
+(prompt injection, PII, format validation)
+       │
+       ▼
+User profile loaded from database
+(state, age, income, occupation, category, docs)
+       │
+       ▼
+Intent classified
+(scholarship / scheme_discovery / eligibility /
+ document_help / application_help / general_query)
+       │
+       ▼
+Relevant schemes found + eligibility checked
+       │
+       ▼
+System prompt assembled
+(profile + documents + history + scheme context)
+       │
+       ▼
+IBM Granite generates personalised response
+       │
+       ▼
+OUTPUT GUARDRAILS
+(hallucination check, PII filter, schema validation)
+       │
+       ▼
+Response returned with:
+  • AI answer (URLs rendered as clickable links)
+  • Scheme cards with official portal links
+  • Eligibility assessment cards
+  • Next steps
 ```
-
-### Agent Descriptions
-
-| Agent | Responsibility |
-|---|---|
-| **Orchestrator** | Receives the user request, classifies intent using keyword matching + IBM Granite, delegates to the right sub-agents, merges outputs, and generates the final personalised response |
-| **Scheme Discovery** | Searches knowledge of Indian central and state government schemes matching the user's profile and query |
-| **Eligibility Verification** | Compares scheme eligibility criteria against the citizen profile; returns Potentially Eligible / Not Eligible / Additional Information Required |
-| **Information Verification** | Cross-checks scheme details, validates official URLs, detects unsupported claims, marks unverified information |
-| **Document Assistance** | Generates document checklists; accepts uploaded images via the vision model; extracts information and highlights missing fields |
-| **Application Assistance** | Provides step-by-step application guidance with direct links to official government portals |
-| **Tracking Agent** | Maintains application records, distinguishes official vs user-entered status updates, reminds about deadlines |
 
 ---
 
 ## AI Guardrails
 
-Guardrails run at every stage of the pipeline:
-
-| Stage | Checks |
+| Stage | What is checked |
 |---|---|
-| **Input** | Prompt injection detection, malicious payload detection, PII handling (Aadhaar, PAN, phone, bank), inappropriate content filter, input size/format validation |
-| **Output** | Hallucination detection, factual accuracy validation, sensitive data leakage prevention (no internal credentials, no other users' data), response schema validation, toxicity filter |
-| **Tool execution** | Agent-level permission checks, function-call parameter validation, unauthorised action prevention |
-| **Operational** | Maximum execution time per agent, token budget limits, API rate limiting, maximum iteration count, loop detection |
-| **Human-in-the-loop** | Government application submission, document sharing, and data deletion require explicit user confirmation before execution |
-| **Multi-agent** | Cross-agent output verification before forwarding, conflict resolution (compare evidence rather than choosing first result), context isolation (agents only see data they need) |
-| **Ethical / compliance** | Bias detection in eligibility explanations, AI assessments never presented as official government decisions, audit trails for every important decision |
+| **Input** | Prompt injection, malicious content, PII (Aadhaar, PAN, phone, bank), format and length |
+| **Output** | Hallucination, sensitive data leakage, schema validation, toxicity |
+| **Operational** | Token budget limits, execution timeouts, iteration caps, loop detection |
+| **Human-in-the-loop** | Application submission and data deletion require explicit user confirmation |
 
 ---
 
@@ -156,152 +111,96 @@ Guardrails run at every stage of the pipeline:
 |---|---|
 | API framework | **FastAPI** (Python 3.9) |
 | ORM | **SQLAlchemy** (async) |
-| Database | **SQLite** (development) / PostgreSQL-compatible |
-| Authentication | **JWT** (python-jose) + **bcrypt** (passlib) |
-| AI service | **IBM watsonx** via REST (`/ml/v1/text/chat`) |
-| IAM auth | IBM Cloud IAM token exchange |
+| Database | **SQLite** (dev) / PostgreSQL-compatible |
+| Authentication | **JWT** + **bcrypt** |
+| AI | **IBM watsonx** REST API |
 | Validation | **Pydantic v2** |
-| Observability | In-process workflow tracer (structured event logs) |
 
 ### Frontend
 | Component | Technology |
 |---|---|
 | Framework | **Next.js 15** (App Router) |
 | Language | **TypeScript** |
-| Styling | **Inline styles** (no Tailwind dependency) — full i18n support |
 | State management | **Zustand** |
-| Notifications | **react-hot-toast** |
-| Multilingual | Full EN / हिंदी / ಕನ್ನಡ translation dictionary |
-
-### AI / ML
-| Component | Technology |
-|---|---|
-| Text LLM | IBM watsonx `ibm/granite-4-h-small` |
-| Vision LLM | IBM watsonx `meta-llama/llama-4-maverick-17b-128e-instruct-fp8` |
-| Chat API | IBM watsonx `/ml/v1/text/chat` (OpenAI-compatible message format) |
-| IAM | IBM Cloud IAM (`iam.cloud.ibm.com/identity/token`) |
+| Multilingual | EN / हिंदी / ಕನ್ನಡ built-in translation |
 
 ---
 
-## Complete Request Workflow
-
-```
-1.  User types a message (e.g. "What schemes am I eligible for?")
-2.  Frontend sends: message + language + conversation history (last 12 turns)
-                  + citizen profile context + uploaded document names
-3.  Backend INPUT GUARDRAILS:
-      - Prompt injection check
-      - PII detection
-      - Format/length validation
-      → If blocked: return clear user-friendly error
-4.  User profile loaded from DB (state, age, income, occupation, category, etc.)
-5.  ORCHESTRATOR AGENT classifies intent:
-      → scholarship / scheme_discovery / eligibility / document_help
-      → application_help / tracking / general_query
-6.  Based on intent, orchestrator calls:
-      a. Scheme Discovery Agent  → finds matching schemes
-      b. Eligibility Agent       → assesses each scheme against profile
-      c. Verification Agent      → validates scheme info, marks unverified claims
-7.  SYSTEM PROMPT assembled with:
-      - Role + language instruction
-      - Full citizen profile (age, income, state, category, flags)
-      - Available documents list
-      - Scheme/eligibility context from agents
-      - Last 10 conversation turns
-8.  IBM Granite generates personalised response
-9.  OUTPUT GUARDRAILS:
-      - Hallucination / unsupported claim check
-      - Sensitive data leakage check
-      - Schema validation
-10. Response returned with:
-      - AI text (with clickable URL links rendered in frontend)
-      - Scheme cards (name, benefits, verification status, official portal link)
-      - Eligibility assessment cards
-      - Next steps
-11. Workflow trace + token usage saved for admin dashboard
-```
-
----
-
-## Setup & Running
+## ▶️ Running the Project
 
 ### Prerequisites
 - Python 3.9+
 - Node.js 18+
-- IBM watsonx API key (project `858f90ab-a928-4103-8fff-9f4da13b9e29`)
 
-### Start with one command
+### Option 1 — One command
+
 ```bash
-chmod +x start.sh && ./start.sh
+cd /path/to/NagrikAI
+chmod +x start.sh
+./start.sh
 ```
 
-### Or manually
+### Option 2 — Run manually (two terminals)
 
-**Backend:**
+**Terminal 1 — Backend API:**
 ```bash
 cd backend
 pip install -r requirements.txt
-python -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
-**Frontend:**
+**Terminal 2 — Frontend:**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-### Access
-| URL | Description |
+### URLs
+| URL | What it is |
 |---|---|
-| http://localhost:3000 | Citizen Portal |
-| http://localhost:3000/citizen | Citizen Dashboard |
-| http://localhost:3000/admin | Admin Dashboard |
-| http://localhost:8000/docs | API Documentation (Swagger) |
-| http://localhost:8000/health | Health Check |
+| http://localhost:3000 | 🏠 Landing page / Sign in |
+| http://localhost:3000/citizen | 💬 Citizen Dashboard (AI assistant, schemes, documents) |
+| http://localhost:3000/admin | ⚙️ Admin Dashboard (monitoring, evaluation, guardrails) |
+| http://localhost:8000/docs | 📖 API Documentation (Swagger UI) |
+| http://localhost:8000/health | ✅ Backend health check |
 
-### Admin Credentials
+---
+
+## 🔐 Admin Login
+
 ```
 Email:    admin@nagrikAI.gov.in
 Password: Admin@NagrikAI2024
 ```
 
----
-
-## Key Design Decisions
-
-**Why multi-agent instead of a single chatbot?**
-Each agent has a defined scope, tool permissions, and output contract. This makes failures isolated and traceable — if the Verification Agent rejects a claim, the Eligibility Agent's result is still preserved. A monolithic chatbot would conflate all these concerns.
-
-**Why IBM Granite?**
-IBM Granite is an open, enterprise-grade model available on IBM watsonx with transparent documentation, predictable pricing, and support for structured chat-format prompting. The `ibm/granite-4-h-small` model is fast, cost-effective, and accurate for government-service Q&A.
-
-**Why Llama 4 Maverick for vision?**
-It is the only vision-capable model available on this watsonx account that supports the `image_url` content type in the chat format, enabling analysis of uploaded document photos.
-
-**Why inline styles instead of Tailwind?**
-Tailwind v4 had rendering issues with the Next.js App Router configuration. Inline styles give full control and zero build-time dependency for styling, which also makes the i18n text substitution straightforward.
+The admin dashboard shows:
+- AI request statistics and latency
+- LLM evaluation metrics
+- Guardrail events and security logs
+- Token usage and cost analytics
+- Workflow execution traces
+- Human approval queue
 
 ---
 
 ## Future Roadmap
 
-- [ ] Real-time application status from official government APIs (DigiLocker, UMANG)
-- [ ] Aadhaar-based eKYC for verified identity
-- [ ] Document OCR — extract data from uploaded Aadhaar/PAN automatically
+- [ ] Real-time application status from DigiLocker / UMANG APIs
+- [ ] Aadhaar-based eKYC
+- [ ] Automatic document OCR (extract info from uploaded Aadhaar/PAN)
 - [ ] Push notifications for application deadlines
-- [ ] Voice input support (Web Speech API)
-- [ ] Offline PWA mode for low-connectivity areas
-- [ ] Integration with myscheme.gov.in official API when available
-- [ ] Fine-tuned Granite model on Indian government scheme corpus
+- [ ] Voice input (Web Speech API)
+- [ ] Offline PWA for low-connectivity areas
+- [ ] myscheme.gov.in official API integration
 
 ---
 
-## Important Disclaimers
+## Disclaimer
 
-> NagrikAI provides **preliminary guidance only**. All eligibility assessments are AI-generated and must be verified against official government sources before taking any action.
+> NagrikAI provides **preliminary guidance only**. All eligibility assessments are AI-generated estimates and must be verified against official government sources before taking any action.
 >
-> Official government portals: [myscheme.gov.in](https://www.myscheme.gov.in) · [india.gov.in](https://www.india.gov.in) · [services.india.gov.in](https://services.india.gov.in)
+> Official portals: [myscheme.gov.in](https://www.myscheme.gov.in) · [india.gov.in](https://www.india.gov.in) · [services.india.gov.in](https://services.india.gov.in)
 
 ---
 
