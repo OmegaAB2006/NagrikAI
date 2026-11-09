@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Secrets — never commit these
+backend/.env
+backend/env.txt
+frontend/.env.local
+frontend/env.local.txt
+
+# Database files
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
+# Node / Next.js
+node_modules/
+frontend/.next/
+frontend/out/
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+nohup.out
+
+# IDE
+.idea/
+.vscode/
+*.swp
