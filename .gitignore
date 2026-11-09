@@ -8,9 +8,7 @@ env/
 *.egg-info/
 
 # Secrets — never commit these
-backend/.env
 backend/env.txt
-frontend/.env.local
 frontend/env.local.txt
 
 # Database files
