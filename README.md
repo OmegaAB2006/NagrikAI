@@ -4,6 +4,45 @@
 
 ---
 
+## ▶️ Quick Start
+
+### Step 1 — Clone the repo
+```bash
+git clone https://github.com/OmegaAB2006/NagrikAI.git
+cd NagrikAI
+```
+
+### Step 2 — Start the Backend
+```bash
+cd backend
+pip install -r requirements.txt
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+### Step 3 — Start the Frontend *(new terminal)*
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+### Step 4 — Open in browser
+
+| URL | Page |
+|---|---|
+| http://localhost:3000 | 🏠 Landing page |
+| http://localhost:3000/citizen | 💬 Citizen AI Assistant |
+| http://localhost:3000/admin | ⚙️ Admin Dashboard |
+| http://localhost:8000/docs | 📖 API Docs (Swagger) |
+
+### Admin credentials
+```
+Email:    admin@nagrikai.gov.in
+Password: Admin@NagrikAI2024
+```
+
+---
+
 ## What is NagrikAI?
 
 NagrikAI is a secure, intelligent, multilingual AI platform that helps Indian citizens discover government schemes, check their eligibility, prepare documents, and track applications — all through a single conversational interface.
@@ -123,47 +162,6 @@ Response returned with:
 | Language | **TypeScript** |
 | State management | **Zustand** |
 | Multilingual | EN / हिंदी / ಕನ್ನಡ built-in translation |
-
----
-
-## ▶️ Running the Project
-
-### Prerequisites
-- Python 3.9+
-- Node.js 18+
-
-### Option 1 — One command
-
-```bash
-cd /path/to/NagrikAI
-chmod +x start.sh
-./start.sh
-```
-
-### Option 2 — Run manually (two terminals)
-
-**Terminal 1 — Backend API:**
-```bash
-cd backend
-pip install -r requirements.txt
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000
-```
-
-**Terminal 2 — Frontend:**
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-### URLs
-| URL | What it is |
-|---|---|
-| http://localhost:3000 | 🏠 Landing page / Sign in |
-| http://localhost:3000/citizen | 💬 Citizen Dashboard (AI assistant, schemes, documents) |
-| http://localhost:3000/admin | ⚙️ Admin Dashboard (monitoring, evaluation, guardrails) |
-| http://localhost:8000/docs | 📖 API Documentation (Swagger UI) |
-| http://localhost:8000/health | ✅ Backend health check |
 
 ---
 
