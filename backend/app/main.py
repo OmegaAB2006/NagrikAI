@@ -38,11 +38,11 @@ async def seed_admin_user():
     import uuid
 
     async with async_session_factory() as db:
-        result = await db.execute(select(User).where(User.email == "admin@nagrikAI.gov.in"))
+        result = await db.execute(select(User).where(User.email == "admin@nagrikai.gov.in"))
         if not result.scalar_one_or_none():
             admin = User(
                 id=str(uuid.uuid4()),
-                email="admin@nagrikAI.gov.in",
+                email="admin@nagrikai.gov.in",
                 full_name="NagrikAI Administrator",
                 hashed_password=get_password_hash("Admin@NagrikAI2024"),
                 role="admin"
@@ -51,7 +51,7 @@ async def seed_admin_user():
             profile = UserProfile(id=str(uuid.uuid4()), user_id=admin.id)
             db.add(profile)
             await db.commit()
-            logger.info("admin_user_created", email="admin@nagrikAI.gov.in")
+            logger.info("admin_user_created", email="admin@nagrikai.gov.in")
 
 
 app = FastAPI(

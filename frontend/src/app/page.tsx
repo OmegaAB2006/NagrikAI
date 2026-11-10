@@ -257,7 +257,7 @@ export default function HomePage() {
             Admin Login →
           </button>
           <div style={{ marginTop: '12px', color: '#64748b', fontSize: '13px' }}>
-            admin@nagrikAI.gov.in / Admin@NagrikAI2024
+            admin@nagrikai.gov.in / Admin@NagrikAI2024
           </div>
         </div>
       </div>

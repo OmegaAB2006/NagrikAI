@@ -170,7 +170,7 @@ npm run dev
 ## 🔐 Admin Login
 
 ```
-Email:    admin@nagrikAI.gov.in
+Email:    admin@nagrikai.gov.in
 Password: Admin@NagrikAI2024
 ```
 
