@@ -139,12 +139,11 @@ export default function HomePage() {
     { icon: '📝', name: 'Application Guide', desc: 'Step-by-step guidance through official government portals' },
     { icon: '🔒', name: 'Info Verification', desc: 'Cross-checks every scheme with authoritative government sources' },
     { icon: '📊', name: 'Track Applications', desc: 'Monitor progress, get deadline reminders, and status updates' },
-    { icon: '🧠', name: 'AI Orchestrator', desc: 'Central coordinator ensuring accurate, secure multi-agent collaboration' },
   ];
 
   const steps = [
     { n: '01', title: 'Tell us about yourself', desc: 'Enter basic details — state, age, occupation, income. Takes 60 seconds.' },
-    { n: '02', title: 'AI finds your schemes', desc: '7 specialized agents search central & state databases for relevant benefits.' },
+    { n: '02', title: 'AI finds your schemes', desc: 'IBM Granite AI searches central & state databases for relevant benefits.' },
     { n: '03', title: 'Check your eligibility', desc: 'Get a clear preliminary eligibility report with explanations.' },
     { n: '04', title: 'Prepare and apply', desc: 'Document checklist, upload assistance, and direct links to official portals.' },
   ];
@@ -176,8 +175,8 @@ export default function HomePage() {
             <span style={S.heroSpan}>Government Services</span>
           </h1>
           <p style={S.heroSub}>
-            Discover schemes, check eligibility, prepare documents, and track applications — 
-            all powered by 7 specialized AI agents. Available in English, हिंदी, and ಕನ್ನಡ.
+            Discover schemes, check eligibility, prepare documents, and track applications —
+            powered by IBM Granite AI. Available in English, हिंदी, and ಕನ್ನಡ.
           </p>
           <div style={S.heroBtns}>
             <button style={S.btnPrimary} onClick={() => setMode('register')}>
@@ -192,10 +191,10 @@ export default function HomePage() {
         {/* Stats */}
         <div style={S.statsBar}>
           {[
-            ['7', 'AI Agents'],
             ['100+', 'Schemes Covered'],
             ['3', 'Languages'],
             ['100%', 'Free to Use'],
+            ['24/7', 'Available'],
           ].map(([n, l]) => (
             <div key={l} style={S.stat}>
               <span style={S.statNum}>{n}</span>
@@ -208,8 +207,8 @@ export default function HomePage() {
       {/* ── Features Grid ── */}
       <div style={S.features}>
         <div style={S.featuresInner}>
-          <h2 style={S.featuresTitle}>7 Specialized AI Agents Working Together</h2>
-          <p style={S.featuresSub}>Each agent is an expert in its domain, coordinated by a central orchestrator</p>
+          <h2 style={S.featuresTitle}>What NagrikAI Can Do For You</h2>
+          <p style={S.featuresSub}>Powered by IBM Granite AI — personalised to your profile, available in 3 languages</p>
           <div style={S.featuresGrid}>
             {features.map((f) => (
               <div key={f.name} style={S.featureCard}>
